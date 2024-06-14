@@ -20,19 +20,11 @@ class Application(tk.Frame):
         self.column1_button.grid(row=1, column=0)
 
         # Column 2
-        self.column2_label = tk.Label(self, text="Sorted Skittles")
-        self.column2_label.grid(row=0, column=1)
-        self.column2_label["text"] = text="Yellow count: " + str(self.colourCount[0])
-        self.column2_label.grid(row=1, column=1)
-        self.column2_label["text"] = text="Red count: " + str(self.colourCount[1])
-        self.column2_label.grid(row=2, column=1)
-        self.column2_label["text"] = text="Blue count: " + str(self.colourCount[2])
-        self.column2_label.grid(row=3, column=1)
-        self.column2_label["text"] = text="Green count: " + str(self.colourCount[3])
-        self.column2_label.grid(row=4, column=1)
-        self.column2_label["text"] = text="Purple count: " + str(self.colourCount[4])
-        self.column2_label.grid(row=5, column=1)
-
+        self.column2_labels = []
+        for i, color in enumerate(["Yellow", "Red", "Blue", "Green", "Purple"]):
+            label = tk.Label(self, text=f"{color} count: 0")
+            label.grid(row=i+1, column=1)
+            self.column2_labels.append(label)
 
         # Column 3
         self.column3_label = tk.Label(self, text="Manual control mode")
@@ -41,31 +33,31 @@ class Application(tk.Frame):
         #Yellow button
         self.column3_button0 = tk.Button(self)
         self.column3_button0["text"] = "Yellow"
-        self.column3_button0["command"] = self.yellow_button_clicked
+        self.column3_button0["command"] = lambda: self.servoTurnToAngle(0, 0)
         self.column3_button0.grid(row=1, column=2)
 
         #Red button
         self.column3_button1 = tk.Button(self)
         self.column3_button1["text"] = "Red"
-        self.column3_button1["command"] = self.red_button_clicked
+        self.column3_button1["command"] = lambda: self.servoTurnToAngle(40, 1)
         self.column3_button1.grid(row=2, column=2)
 
         #Blue button
         self.column3_button2 = tk.Button(self)
         self.column3_button2["text"] = "Blue"
-        self.column3_button2["command"] = self.blue_button_clicked
+        self.column3_button2["command"] = lambda: self.servoTurnToAngle(60, 2)
         self.column3_button2.grid(row=3, column=2)
 
         #Green button
         self.column3_button3 = tk.Button(self)
         self.column3_button3["text"] = "Green"
-        self.column3_button3["command"] = self.servoTurnToAngle(80, 3)
+        self.column3_button3["command"] = lambda: self.servoTurnToAngle(80, 3)
         self.column3_button3.grid(row=4, column=2)
 
         #Purple button
         self.column3_button4 = tk.Button(self)
         self.column3_button4["text"] = "Purple"
-        self.column3_button4["command"] = self.servoTurnToAngle(100, 4)
+        self.column3_button4["command"] = lambda: self.servoTurnToAngle(100, 4)
         self.column3_button4.grid(row=5, column=2)
 
 
@@ -75,32 +67,14 @@ class Application(tk.Frame):
     def column2_button_clicked(self):
         print("Column 2 button clicked!")
 
-    def yellow_button_clicked(self):
-        print("Yellow button clicked!")
-        self.colourCount[0] += 1
-        self.column2_label["text"] = text="Yellow count: " + str(self.colourCount[0])
-        self.column2_label.grid(row=1, column=1)
-
-    def red_button_clicked(self):
-        print("Red button clicked!")
-        self.colourCount[1] += 1
-        self.column2_label["text"] = text="Red count: " + str(self.colourCount[1])
-        self.column2_label.grid(row=2, column=1)
-
-    def blue_button_clicked(self):
-        print("Blue button clicked!")
-        self.colourCount[2] += 1
-        self.column2_label["text"] = text="Blue count: " + str(self.colourCount[2])
-        self.column2_label.grid(row=3, column=1)
+    def column3_button_clicked(self):
+        print("Column 3 button clicked!")
 
     def servoTurnToAngle(self, degrees, colour):
         print(degrees)
         print(colour)
         self.colourCount[colour] += 1
-        
-
-    def servoTurnToAngle1(self):
-        self.colourCount[0] += 1
+        self.column2_labels[colour]["text"] = f"{['Yellow', 'Red', 'Blue', 'Green', 'Purple'][colour]} count: {self.colourCount[colour]}"
 
 root = tk.Tk()
 app = Application(master=root)
