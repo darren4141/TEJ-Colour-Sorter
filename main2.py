@@ -1,27 +1,46 @@
 import tkinter as tk
+import time
+from time import sleep
+import RPi.GPIO as GPIO
+from gpiozero import Servo
+
+
+GPIO.setmode(GPIO.BCM)
+
+#Declare the rampServoPin as 22
+rampServoPin = 22
+# Declare servo on GPIO pin
+rampServo = Servo(rampServoPin)
+# Set up GPIO pin of servo as an output
+GPIO.setup(rampServoPin, GPIO.OUT)
+
+#Declare the loaderServoPin as 23
+loaderServoPin = 23
+loaderServo = Servo(loaderServoPin)
+GPIO.setup(loaderServoPin, GPIO.OUT)
 
 class Application(tk.Frame):
+
     def __init__(self, master=None):
         super().__init__(master)
-
-        self.colourCount = [0, 0, 0, 0, 0]
-
+        self.colourCount = [0, 0, 0, 0, 0] #declare 5 counters for the amount of each colour
         self.master = master
         self.pack()
         self.create_widgets()
 
+
     def create_widgets(self):
         # Column 1
-        self.column1_label = tk.Label(self, text="Column 1")
-        self.column1_label.grid(row=0, column=0)
-        self.column1_button = tk.Button(self)
-        self.column1_button["text"] = "Button 1"
-        self.column1_button["command"] = self.column1_button_clicked
-        self.column1_button.grid(row=1, column=0)
+        self.column1_label = tk.Label(self, text="Commands") #set text label
+        self.column1_label.grid(row=0, column=0) #set position of text label
+        self.column1_button = tk.Button(self) #declare a new button
+        self.column1_button["text"] = "Load" #set the label on the button
+        self.column1_button["command"] = self.load #set the method that will be called when the button is clicked
+        self.column1_button.grid(row=1, column=0) #set the position of the button
 
         # Column 2
         self.column2_labels = []
-        for i, color in enumerate(["Yellow", "Red", "Blue", "Green", "Purple"]):
+        for i, color in enumerate(["Yellow", "Red", "Blue", "Green", "Purple"]): #loop through an array of strings and make 5 labels with each string as the content
             label = tk.Label(self, text=f"{color} count: 0")
             label.grid(row=i+1, column=1)
             self.column2_labels.append(label)
@@ -61,20 +80,20 @@ class Application(tk.Frame):
         self.column3_button4.grid(row=5, column=2)
 
 
-    def column1_button_clicked(self):
-        print("Column 1 button clicked!")
+    def load(self):
+        global loaderServo
+        print("Load button clicked!")
+        loaderServo.value = 0
+        time.sleep(2)
+        loaderServo.value = 180
 
-    def column2_button_clicked(self):
-        print("Column 2 button clicked!")
-
-    def column3_button_clicked(self):
-        print("Column 3 button clicked!")
-
-    def servoTurnToAngle(self, degrees, colour):
+    def servoTurnToAngle(self, degrees, colour): # the servo turn to angle method will increment a counter and turn the servo motor to a specific angle
+        global rampServo
         print(degrees)
         print(colour)
         self.colourCount[colour] += 1
         self.column2_labels[colour]["text"] = f"{['Yellow', 'Red', 'Blue', 'Green', 'Purple'][colour]} count: {self.colourCount[colour]}"
+        rampServo.value = degrees/180
 
 root = tk.Tk()
 app = Application(master=root)
